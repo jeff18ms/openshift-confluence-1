@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: null
+  generation: 29
+  labels:
+    app: confluence-server
+  name: confluence-server
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: confluence-server
+    deploymentconfig: confluence-server
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: confluence-server
+        deploymentconfig: confluence-server
+    spec:
+      containers:
+      - env:
+        - name: CATALINA_CONNECTOR_PROXYNAME
+          value: confluence-server-mro-confluence.app.oscp-int.mercedes-benz.com
+        - name: CATALINA_CONNECTOR_PROXYPORT
+          value: "443"
+        - name: CATALINA_CONNECTOR_SCHEME
+          value: https
+        - name: CATALINA_CONNECTOR_SECURE
+          value: "true"
+        image: docker-registry.default.svc:5000/mro-confluence/confluence-server@sha256:a4a1495b762ebde7bf1da408cdc75b221d93b6f3f321535a7d127296a3c6da7c
+        imagePullPolicy: Always
+        name: confluence-server
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        - containerPort: 8091
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/atlassian/application-data/confluence
+          name: confluence-server-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: confluence-server-data
+        persistentVolumeClaim:
+          claimName: confluence-data
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - confluence-server
+      from:
+        kind: ImageStreamTag
+        name: confluence-server:latest
+        namespace: mro-confluence
+      lastTriggeredImage: docker-registry.default.svc:5000/mro-confluence/confluence-server@sha256:a4a1495b762ebde7bf1da408cdc75b221d93b6f3f321535a7d127296a3c6da7c
+    type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0
