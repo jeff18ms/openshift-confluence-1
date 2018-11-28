@@ -1,8 +1,8 @@
 FROM openjdk:8-jdk-alpine
 MAINTAINER Atlassian Confluence
 
-ENV RUN_USER=daemon \
-RUN_GROUP=daemon
+ENV RUN_USER=1001
+ENV RUN_GROUP=root
 
 # https://confluence.atlassian.com/doc/confluence-home-and-other-important-directories-590259707.html
 ENV CONFLUENCE_HOME          /var/atlassian/application-data/confluence
