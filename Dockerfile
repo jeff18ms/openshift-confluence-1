@@ -1,11 +1,12 @@
 FROM openjdk:8-jdk-alpine
 MAINTAINER Atlassian Confluence
 
-ENV RUN_USER=1001
-ENV RUN_GROUP=root
+ENV RUN_USER    1001
+ENV RUN_GROUP   root
 
 # https://confluence.atlassian.com/doc/confluence-home-and-other-important-directories-590259707.html
-ENV CONFLUENCE_HOME          /var/atlassian/application-data/confluence
+# /var/atlassian/application-data/confluence
+ENV CONFLUENCE_HOME          /opt/atlassian/confluence/application-data/confluence
 ENV CONFLUENCE_INSTALL_DIR   /opt/atlassian/confluence
 
 VOLUME ["${CONFLUENCE_HOME}"]
