@@ -1,8 +1,8 @@
 FROM openjdk:8-jdk-alpine
 MAINTAINER Atlassian Confluence
 
-ENV RUN_USER            1001
-ENV RUN_GROUP           root
+ENV RUN_USER=daemon \
+RUN_GROUP=daemon
 
 # https://confluence.atlassian.com/doc/confluence-home-and-other-important-directories-590259707.html
 ENV CONFLUENCE_HOME          /var/atlassian/application-data/confluence
@@ -31,7 +31,7 @@ RUN mkdir -p                             ${CONFLUENCE_INSTALL_DIR} \
     && chown -R ${RUN_USER}:${RUN_GROUP} ${CONFLUENCE_INSTALL_DIR}/ \
     && chmod -R g+w ${CONFLUENCE_INSTALL_DIR}/ \
     && chown -R ${RUN_USER}:${RUN_GROUP} ${CONFLUENCE_HOME} \
-    && chmod -R 777 ${CONFLUENCE_HOME} \
+    && chmod -R g+w ${CONFLUENCE_HOME} \
     && echo "${RUN_USER}:x:${RUN_USER}:0:${RUN_USER}:user:${HOME}:/sbin/nologin" >> /etc/passwd \
     && sed -i -e 's/-Xms\([0-9]\+[kmg]\) -Xmx\([0-9]\+[kmg]\)/-Xms\${JVM_MINIMUM_MEMORY:=\1} -Xmx\${JVM_MAXIMUM_MEMORY:=\2} \${JVM_SUPPORT_RECOMMENDED_ARGS} -Dconfluence.home=\${CONFLUENCE_HOME}/g' ${CONFLUENCE_INSTALL_DIR}/bin/setenv.sh \
     && sed -i -e 's/port="8090"/port="8090" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}"/' ${CONFLUENCE_INSTALL_DIR}/conf/server.xml  \
