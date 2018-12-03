@@ -5,8 +5,8 @@ ENV RUN_USER    1001
 ENV RUN_GROUP   root
 
 # https://confluence.atlassian.com/doc/confluence-home-and-other-important-directories-590259707.html
-# /var/atlassian/application-data/confluence
-ENV CONFLUENCE_HOME          /opt/atlassian/confluence/application-data/confluence
+ENV CONFLUENCE_CLUSTER_SHARED /var/atlassian/application-data/confluence/cluster
+ENV CONFLUENCE_HOME          /var/atlassian/application-data/confluence
 ENV CONFLUENCE_INSTALL_DIR   /opt/atlassian/confluence
 
 VOLUME ["${CONFLUENCE_HOME}"]
@@ -27,7 +27,9 @@ ARG DOWNLOAD_URL=http://www.atlassian.com/software/confluence/downloads/binary/a
 
 COPY . /tmp
 
-RUN mkdir -p                             ${CONFLUENCE_INSTALL_DIR} \
+RUN mkdir -p ${CONFLUENCE_INSTALL_DIR} \
+    && mkdir -p ${CONFLUENCE_CLUSTER_SHARED} \
+    && mkdir -p ${CONFLUENCE_HOME} \
     && curl -L --silent                  ${DOWNLOAD_URL} | tar -xz --strip-components=1 -C "$CONFLUENCE_INSTALL_DIR" \
     && chown -R ${RUN_USER}:${RUN_GROUP} ${CONFLUENCE_INSTALL_DIR}/ \
     && chmod -R g+w ${CONFLUENCE_INSTALL_DIR}/ \
